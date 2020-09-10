@@ -65,7 +65,7 @@ char const* getUsage()
 enum
 {
     STATS_REFRESH_INTERVAL_MSEC = 3000,
-    SESSION_REFRESH_INTERVAL_MSEC = 3000,
+    SESSION_REFRESH_INTERVAL_MSEC = 5000,
     MODEL_REFRESH_INTERVAL_MSEC = 3000
 };
 
@@ -311,7 +311,7 @@ Application::Application(int& argc, char** argv) :
     timer->start();
 
     timer = &session_timer_;
-    connect(timer, &QTimer::timeout, session_, &Session::refreshSessionInfo);
+    connect(timer, &QTimer::timeout, session_, &Session::refreshSessionInfoLazy);
     timer->setSingleShot(false);
     timer->setInterval(SESSION_REFRESH_INTERVAL_MSEC);
     timer->start();
@@ -525,7 +525,7 @@ void Application::onSessionSourceChanged()
 {
     session_->initTorrents();
     session_->refreshSessionStats();
-    session_->refreshSessionInfo();
+    session_->refreshSessionInfoFull();
 }
 
 void Application::refreshTorrents()

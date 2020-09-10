@@ -194,7 +194,7 @@ void Session::updatePref(int key)
         case Prefs::DOWNLOAD_DIR:
             sessionSet(prefs_.getKey(key), prefs_.variant(key));
             /* this will change the 'freespace' argument, so refresh */
-            refreshSessionInfo();
+            refreshSessionInfoFull();
             break;
 
         case Prefs::RATIO:
@@ -801,7 +801,33 @@ void Session::refreshSessionStats()
     q->run();
 }
 
-void Session::refreshSessionInfo()
+void Session::refreshSessionInfoLazy()
+{
+    auto constexpr Fields = std::array<std::string_view, 1>{ "editDate" };
+
+    tr_variant args;
+    tr_variantInitDict(&args, 1);
+    dictAdd(&args, TR_KEY_fields, Fields);
+
+    auto* q = new RpcQueue();
+
+    q->add([this, &args]()
+        {
+            return exec("session-get", &args);
+        });
+    q->add([this](RpcResponse const& r)
+        {
+            auto const edit_date = dictFind<uint64_t>(r.args.get(), TR_KEY_editDate);
+            std::cerr << "session_edit_date: " << session_edit_date_ << std::endl;
+            if (edit_date && (session_edit_date_ != *edit_date))
+            {
+                session_edit_date_ = *edit_date;
+                refreshSessionInfoFull();
+            }
+        });
+}
+
+void Session::refreshSessionInfoFull()
 {
     auto* q = new RpcQueue();
 
@@ -809,7 +835,6 @@ void Session::refreshSessionInfo()
         {
             return exec("session-get", nullptr);
         });
-
     q->add([this](RpcResponse const& r)
         {
             updateInfo(r.args.get());

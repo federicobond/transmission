@@ -14,6 +14,8 @@
 
 #define TR_NAME "Transmission"
 
+#include <time.h>  // time_t
+
 #include "bandwidth.h"
 #include "bitfield.h"
 #include "net.h"
@@ -225,6 +227,8 @@ struct tr_session
 
     struct tr_bindinfo* public_ipv4;
     struct tr_bindinfo* public_ipv6;
+
+    time_t editDate;
 };
 
 static inline tr_port tr_sessionGetPublicPeerPort(tr_session const* session)
@@ -323,5 +327,13 @@ bool tr_sessionGetActiveSpeedLimit_Bps(tr_session const* session, tr_direction d
 void tr_sessionGetNextQueuedTorrents(tr_session* session, tr_direction dir, size_t numwanted, tr_ptrArray* setme);
 
 int tr_sessionCountQueueFreeSlots(tr_session* session, tr_direction);
+
+static inline void tr_sessionMarkEdited(tr_session* session)
+{
+    TR_ASSERT(tr_isSession(session));
+
+    session->editDate = tr_time();
+}
+
 
 TR_END_DECLS

@@ -488,7 +488,7 @@ tr_port tr_sessionSetPeerPortRandom(tr_session* session);
 
 void tr_sessionSetPeerPortRandomOnStart(tr_session* session, bool random);
 
-bool tr_sessionGetPeerPortRandomOnStart(tr_session* session);
+bool tr_sessionGetPeerPortRandomOnStart(tr_session const* session);
 
 typedef enum
 {

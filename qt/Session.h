@@ -125,7 +125,8 @@ public slots:
     void queueMoveDown(torrent_ids_t const& torrentIds = {});
     void queueMoveTop(torrent_ids_t const& torrentIds = {});
     void queueMoveUp(torrent_ids_t const& torrentIds = {});
-    void refreshSessionInfo();
+    void refreshSessionInfoFull();
+    void refreshSessionInfoLazy();
     void refreshSessionStats();
     void removeTorrents(torrent_ids_t const& torrent_ids, bool delete_files = false);
     void updatePref(int key);
@@ -180,6 +181,8 @@ private:
 
     std::map<QString, QString> duplicates_;
     QTimer duplicates_timer_;
+
+    uint64_t session_edit_date_ = {};
 
 private slots:
     void onDuplicatesTimer();

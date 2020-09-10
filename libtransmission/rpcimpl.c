@@ -2405,6 +2405,10 @@ static void addSessionField(tr_session* s, tr_variant* d, tr_quark key)
         tr_variantDictAddInt(d, key, tr_sessionGetQueueSize(s, TR_DOWN));
         break;
 
+    case TR_KEY_editDate:
+        tr_variantDictAddInt(d, key, s->editDate);
+        break;
+
     case TR_KEY_peer_limit_global:
         tr_variantDictAddInt(d, key, tr_sessionGetPeerLimit(s));
         break;
